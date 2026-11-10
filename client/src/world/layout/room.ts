@@ -160,14 +160,15 @@ export function layoutProjectRoom(room: RoomInput, theme: RoomTheme): AreaLayout
     seat('stool', 'stool', 10, 7, 'up', undefined, { order: 0.67 });
     seat('stool', 'stool', 12, 7, 'up', undefined, { order: 0.68 });
   } else if (v.meeting === 'round') {
-    // duas mesinhas redondas com duas banquetas cada (em diagonal, para circular entre elas)
+    // duas mesinhas redondas com duas banquetas cada, num tapete que ancora o canto (sem ele, as
+    // mesinhas pareciam soltas no piso); o vão entre as mesas fica livre para circular
+    rug(9.6, 3.7, 4.8, 4.6, shade(theme.carpet2, 0.25), room.seed + 2);
     furn('cafe_table', 11, 4, undefined, { order: 0.45 });
     seat('stool', 'stool', 10, 4, 'right', undefined, { order: 0.65 });
     seat('stool', 'stool', 12, 4, 'left', undefined, { order: 0.66 });
     furn('cafe_table', 11, 7, undefined, { order: 0.46 });
     seat('stool', 'stool', 10, 7, 'right', undefined, { order: 0.67 });
     seat('stool', 'stool', 12, 7, 'left', undefined, { order: 0.68 });
-    furn('plant_small', 12, 5, pick(PLANTS_SMALL), { order: 0.47 });
   } else {
     // recanto com poltronas e puffs em volta de uma mesa de centro (sem mesa de reunião)
     rug(9.6, 3.7, 4.8, 4.6, shade(theme.carpet2, 0.25), room.seed + 2);

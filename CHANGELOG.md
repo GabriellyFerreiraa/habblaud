@@ -15,6 +15,12 @@ do meio (0.**3**.0).
 - **Salas fixas:** `HABBLAUD_FIXED_ROOMS` (pastas separadas por `;`) deixa salas no prédio mesmo sem nenhuma sessão
   aberta. Quando o último agente sai, a sala fica, em vez de virar jardim.
 
+### Corrigido
+
+- **Móveis soltos no piso:** as mesinhas redondas das salas, as mesinhas bistrô da copa e os puffs do lounge
+  ganharam um tapete embaixo e não parecem mais flutuar. A planta (ou o presente, no Natal) que ficava espremida
+  entre as mesinhas das salas saiu.
+
 ## [1.0.3] - 2026-10-16
 
 ### Corrigido

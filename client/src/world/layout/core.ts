@@ -164,7 +164,8 @@ export function layoutCafe(): AreaLayout {
   }
   b.furn('plant_small', 3, 5, 'flower', { order: 0.52 });
 
-  // mesinhas bistrô junto às janelas
+  // mesinhas bistrô junto às janelas, num tapete que ancora o canto
+  b.rug(11.5, 4.3, 3.3, 5.4, '#c9a27a', 304);
   for (const [lx, ly, i] of [
     [12, 5, 0],
     [12, 8, 1],
@@ -235,7 +236,8 @@ export function layoutLounge(): AreaLayout {
   b.furn('floor_lamp', 1, 7, undefined, { order: 0.32 });
   b.furn('plant_tall', 14, 10, 'monstera', { order: 0.22 });
 
-  // puffs
+  // puffs, sobre um tapete (soltos no piso de madeira pareciam flutuar)
+  b.rug(5.4, 8.6, 5.8, 1.9, '#8a6e9e', 404);
   (['red', 'blue', 'yellow'] as const).forEach((c, i) => {
     b.seat('beanbag', 'beanbag', 6 + i * 2, 9, 'down', c, { order: 0.6 + i * 0.02 });
   });
