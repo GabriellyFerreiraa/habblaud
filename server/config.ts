@@ -22,6 +22,8 @@ export interface ServerConfig {
   home: string;
   /** Config dirs do Claude Code observados (um por conta). */
   claudeDirs: string[];
+  /** Salas fixas (HABBLAUD_FIXED_ROOMS): pastas que ficam no prédio mesmo sem sessão aberta. */
+  fixedRooms: string[];
   /** Onde o Habblaud guarda o próprio estado (nomes persistidos). */
   dataDir: string;
   /**
@@ -222,6 +224,19 @@ export function worldSocketUrl(base: string): string {
   return `${base.replace(/^http/, 'ws').replace(/\/+$/, '')}/v1/socket`;
 }
 
+/**
+ * HABBLAUD_FIXED_ROOMS: pastas separadas por ";" ou quebra de linha (não por vírgula nem ":", que aparecem em
+ * caminhos do Windows). Repetidas contam uma vez.
+ */
+export function parseFixedRooms(raw: string | undefined): string[] {
+  const out: string[] = [];
+  for (const part of (raw ?? '').split(/[;\n]/)) {
+    const p = part.trim();
+    if (p && !out.includes(p)) out.push(p);
+  }
+  return out;
+}
+
 export function loadConfig(env: NodeJS.ProcessEnv = process.env, argv: string[] = process.argv): ServerConfig {
   const home = env.HOME || homedir();
   const inDocker = detectDocker(env);
@@ -238,6 +253,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env, argv: string[] 
     inDocker,
     home,
     claudeDirs: discoverClaudeDirs(env, home),
+    fixedRooms: parseFixedRooms(env.HABBLAUD_FIXED_ROOMS),
     dataDir: resolve(env.HABBLAUD_DATA_DIR?.trim() || (inDocker ? '/data' : join(home, '.habblaud'))),
     usageDir: resolve(env.HABBLAUD_USAGE_DIR?.trim() || join(home, '.habblaud', 'usage')),
     allowedHosts: parseAllowedHosts(env.HABBLAUD_ALLOWED_HOSTS),

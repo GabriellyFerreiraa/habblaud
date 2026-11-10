@@ -56,6 +56,11 @@ export interface OfficeDeps {
   names: NameStore;
   /** Nome escolhido pelo usuário para a sala da pasta (model/room-aliases.ts), se houver. */
   roomAlias?: (path: string) => string | undefined;
+  /**
+   * Salas fixas (HABBLAUD_FIXED_ROOMS): pastas que ficam no prédio mesmo sem nenhuma sessão aberta, com a luz
+   * apagada até alguém chegar. A sala nunca é desmontada quando o último agente sai.
+   */
+  fixedRooms?: readonly string[];
   version: string;
   /** Build do cliente servido (ver OfficeSnapshot.meta.build); ausente no modo dev e nos testes. */
   build?: () => string | undefined;
@@ -218,8 +223,17 @@ export class Office {
   private seq = 0;
   private readonly now: () => number;
 
+  /** Ids (cwd normalizado) das salas fixas: nunca saem de this.rooms. */
+  private readonly fixed: ReadonlySet<string>;
+
   constructor(private readonly deps: OfficeDeps) {
     this.now = deps.now ?? Date.now;
+    this.fixed = new Set((deps.fixedRooms ?? []).map(normalizeCwd).filter(Boolean));
+    if (this.fixed.size) {
+      const now = this.now();
+      for (const id of this.fixed) this.rooms.set(id, { path: id, createdAt: now });
+      this.recomputeRoomNames();
+    }
   }
 
   /** Avisado (síncrono) sempre que algo muda; o hub decide quando fazer commit(). */
@@ -930,7 +944,7 @@ export class Office {
     if (this.effects.prune(now)) this.markDirty();
     if (removed) {
       const occupied = new Set([...this.agents.values()].map((r) => r.info.roomId));
-      for (const id of [...this.rooms.keys()]) if (!occupied.has(id)) this.rooms.delete(id);
+      for (const id of [...this.rooms.keys()]) if (!occupied.has(id) && !this.fixed.has(id)) this.rooms.delete(id);
       this.recomputeRoomNames();
       this.markDirty();
     }

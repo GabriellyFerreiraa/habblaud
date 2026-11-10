@@ -444,6 +444,33 @@ describe('Office', () => {
     expect(snap.rooms).toEqual([]);
   });
 
+  it('sala fixa existe sem sessão, recebe o agente e continua quando ele vai embora', () => {
+    let clock = 1_000_000;
+    const office = new Office({
+      names: new NameStore(null),
+      fixedRooms: ['C:\\Users\\gabi\\oficina\\sala-carreira', '/p/comercial/'],
+      version: 't',
+      startedAt: clock,
+      accounts: () => [],
+      sources: () => [],
+      accountName: () => 'Conta C',
+      now: () => clock,
+    });
+    let snap = office.commit().snapshot;
+    expect(snap.rooms.map((r) => r.name)).toEqual(['sala-carreira', 'comercial']);
+    expect(snap.agents).toEqual([]);
+    office.addMain({ id: 'acc:1', account: 'acc', sessionId: 's1', cwd: '/p/comercial', role: 'x', startedAt: clock, status: 'working' });
+    snap = office.commit().snapshot;
+    expect(snap.rooms).toHaveLength(2);
+    expect(snap.agents[0].roomId).toBe('/p/comercial');
+    office.closeMain('acc:1');
+    clock += OFFLINE_GRACE_MS + 1;
+    office.tick();
+    snap = office.commit().snapshot;
+    expect(snap.agents).toEqual([]);
+    expect(snap.rooms.map((r) => r.id)).toEqual(['C:\\Users\\gabi\\oficina\\sala-carreira', '/p/comercial']);
+  });
+
   it('demo misturado: salas no mesmo alocador, contas próprias e liga/desliga', () => {
     const { office, now } = makeOffice();
     office.addMain({ id: 'acc:1', account: 'acc', sessionId: 's1', cwd: '/p/real', role: 'x', startedAt: now(), status: 'idle' });

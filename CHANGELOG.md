@@ -10,6 +10,11 @@ do meio (0.**3**.0).
 
 ## [Não lançado]
 
+### Adicionado
+
+- **Salas fixas:** `HABBLAUD_FIXED_ROOMS` (pastas separadas por `;`) deixa salas no prédio mesmo sem nenhuma sessão
+  aberta. Quando o último agente sai, a sala fica, em vez de virar jardim.
+
 ## [1.0.3] - 2026-10-16
 
 ### Corrigido
